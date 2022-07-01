@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it-IT">
+<head th:insert="~{fragments/general :: //headTags}">
+<title>Gestione Voli</title>
+</head>
+<body>
+	<header th:replace="~{fragments/general :: header}"></header>
+
+	<div class="container-fluid text-center">
+
+		<table>
+			<tr th:each="volo : ${voli}">
+				<td th:text="${volo.codice}"></td>
+			</tr>
+		</table>
+
+	</div>
+
+	<footer th:replace="~{fragments/general :: footer}"></footer>
+</body>
+</html>

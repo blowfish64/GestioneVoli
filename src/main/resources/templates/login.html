@@ -1,17 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-    <title>Login - Shopme Admin</title>
-    <link rel="stylesheet" th:href="@{/resource/bootstrap.min.css}"
-        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-        crossorigin="anonymous" />
+<html xmlns:th="http://www.thymeleaf.org" lang="it-IT">
+<head th:insert="~{fragments/general :: //headTags}">
+<title>Gestione Voli - Login</title>
 </head>
 <body>
 <div class="container-fluid text-center">
     <div>
-        <img class="img-fluid mt-4 mb-4" th:src="@{/resource/takeoff.svg}" />
+        <img class="img-fluid my-4" th:src="@{/img/takeoff.svg}">
     </div>
     <form th:action="@{/login}" method="post" style="max-width: 350px; margin: 0 auto;">
      

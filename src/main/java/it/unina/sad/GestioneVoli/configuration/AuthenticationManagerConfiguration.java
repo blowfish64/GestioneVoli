@@ -14,16 +14,13 @@ public class AuthenticationManagerConfiguration {
 
 	@Autowired
 	public void configure(AuthenticationManagerBuilder auth, PasswordEncoder passwordEncoder, DataSource dataSource)
-	  throws Exception {
+			throws Exception {
 		JdbcUserDetailsManagerConfigurer<AuthenticationManagerBuilder> configurer = auth.jdbcAuthentication()
-	      .dataSource(dataSource);
-	    if (!dataSource.getConnection().getMetaData().getTables(null, "", "USERS", null).first()) {
-	    	configurer
-	    		.withDefaultSchema()
-	    		.withUser(User.withUsername("user")
-	    	        .password(passwordEncoder.encode("pass"))
-	    	        .roles("USER"));
-	    }
+				.dataSource(dataSource);
+		if (!dataSource.getConnection().getMetaData().getTables(null, "", "USERS", null).first()) {
+			configurer.withDefaultSchema()
+					.withUser(User.withUsername("user").password(passwordEncoder.encode("pass")).roles("USER"));
+		}
 	}
 
 }
