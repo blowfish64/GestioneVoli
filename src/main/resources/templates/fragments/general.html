@@ -1,28 +1,42 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<header class="container mw-100 bg-dark text-white">
+<header class="container mw-100 bg-dark text-white sticky-top">
 	<div class="row py-3">
 		<div class="col">
 			<a th:href="@{/}"><img style="height: 40px" th:src="@{/img/takeoff.svg}"></a>
 		</div>
-		<div class="col-8">
-			
-		</div>
+		<div class="col-8"></div>
 		<div class="col text-right my-auto">
-			<span class="h5 align-top pr-2" th:text="${principal.getName()}"></span>
-			<a title="Esci" th:href="@{/login?logout}"><img alt="Uscita" style="height: 24px" th:src="@{/img/logout.svg}"></a> 
+			<span class="h5 align-top pr-2" th:text="${principal.getName()}"></span> <a title="Esci" th:href="@{/logout}">
+			<img alt="Uscita" style="height: 24px" th:src="@{/img/logout.svg}"></a>
 		</div>
 	</div>
 </header>
 
-<footer>
-	<p></p>
+<footer class="container text-center">
+	<p class="my-auto p-2">
+		<a href="mailto:dummymail@mail.com">Copyright &copy; 2022 - M00/000000</a>
+	</p>
 </footer>
 
-<head>
-<meta th:fragment="headTags" http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta th:fragment="headTags" name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-<link th:fragment="headTags" rel="stylesheet" th:href="@{/resource/bootstrap.min.css}">
-</head>
+<th:block th:fragment="headTags">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+	<link rel="stylesheet" th:href="@{/resource/bootstrap.min.css}">
+	<style>
+html, body {
+	height: 100%;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+}
+
+main {
+	flex-grow: 1;
+}
+</style>
+</th:block>
 
 </html>
