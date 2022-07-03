@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="flights">
+	<h1 class="mb-4">Gestione dei Voli</h1>
+	<form class="border border-secondary rounded mb-3 p-3" th:action="@{/admin/flights}" method="post" enctype="application/x-www-form-urlencoded">
+		<p>Aggiungi nuovo Volo</p>
+		<div class="mb-3 row">
+			<div class="col">
+				<input class="form-control" type="text" name="code" required="required" placeholder="Codice Volo" th:attrappend="autofocus=${post} ? 'autofocus'">
+			</div>
+			<div class="col">
+				<input class="form-control" type="text" name="flightDateTime" id="flightDateTime" required="required" placeholder="Data e Ora di Partenza del Volo">
+			</div>
+			<div class="col">
+				<div class="row">
+					<input class="form-control col" type="number" name="ticketPrice" min="1.00" step="0.01" required="required" placeholder="Prezzo Base del Biglietto">
+					<label for="ticketPrice" class="col-auto col-form-label">€uro</label>
+				</div>
+			</div>
+		</div>
+		<div class="mb-3 row">
+			<label for="airplane" class="col-sm-2 col-form-label">Aereo</label>
+			<div class="col-sm-10">
+				<select name="airplane" id="airplane" required="required">
+					<option th:each="airplane : ${airplanes}" th:object="${airplane}" th:value="*{id}">[[*{compagniaAerea.nome}]]: [[*{matricola}]]</option>	
+				</select>
+			</div>
+		</div>
+		<div class="mb-3 row">
+			<label for="route" class="col-sm-2 col-form-label">Tratta</label>
+			<div class="col-sm-10">
+				<select name="route" id="route" required="required">
+					<option th:each="route : ${routes}" th:object="${route}" th:value="*{id}">[[*{aeroportoPartenza.getCity()}]] [[*{aeroportoPartenza.nome}]] &#x25B6; [[*{aeroportoDestinazione.getCity()}]] [[*{aeroportoDestinazione.nome}]]</option>	
+				</select>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-auto">
+				<input type="submit" value="Aggiungi Volo" class="btn btn-primary mb-3">
+			</div>
+		</div>
+		<div th:if="${post == true && success == true}">
+			<p class="text-success mb-0">Il Volo &egrave; stato aggiunto.</p>
+		</div>
+		<div th:if="${post == true && success == false}">
+			<p class="text-danger mb-0">[[${error}]]</p>
+		</div>
+	</form>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Codice</th>
+				<th>Data/Ora Partenza</th>
+				<th>Prezzo Base</th>
+				<th>Posti Passeggeri<br>Disponibili</th>
+				<th>Posti Bagagli in<br>Cabina Disponibili</th>
+				<th>Posti Bagagli in<br>Stiva Disponibili</th>
+				<th>Aereo</th>
+				<th>Tratta</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody id="flightsTable">
+			<tr th:unless="${#lists.isEmpty(flights)}" th:each="flight : ${flights}" th:object="${flight}" th:id="*{codice}">
+				<td>[[*{codice}]]</td>
+				<td>[[${#dates.format(flight.dataOraPartenza, 'dd/MM/yyyy HH:mm')}]]</td>
+				<td>[[*{prezzoBase}]] €</td>
+				<td>[[*{{postiPasseggeroRestanti}}]]</td>
+				<td>[[*{{postiBagaglioCabinaRestanti}}]]</td>
+				<td>[[*{{postiBagaglioStivaRestanti}}]]</td>
+				<td th:object="${flight.aereo}">[[*{compagniaAerea.nome}]]: [[*{matricola}]]</td>
+				<td th:object="${flight.tratta}">[[*{aeroportoPartenza.getCity()}]] [[*{aeroportoPartenza.nome}]] &#x25B6; [[*{aeroportoDestinazione.getCity()}]] [[*{aeroportoDestinazione.nome}]]</td>
+				<td>Delete</td>
+			</tr>
+			<tr th:if="${#lists.isEmpty(flights)}">
+				<td colspan="9">Non esiste alcun dato.</td>
+			</tr>
+		</tbody>
+	</table>
+	<script>
+	window.addEventListener("DOMContentLoaded", function(e) {
+		new Selectr("#airplane", { defaultSelected: false, placeholder: "Seleziona l'Aereo", messages: { noResults: "Nessun Aereo con questa matricola" } });
+		new Selectr("#route", { defaultSelected: false, placeholder: "Seleziona la Tratta", messages: { noResults: "Nessuna Tratta con questo nome" } });
+		new Pikaday({
+	        field: document.getElementById("flightDateTime"),
+	        firstDay: 1,
+	        minDate: new Date(),
+	        maxDate: new Date(2099, 12, 31),
+	        yearRange: [2022,2099]
+	    });
+	})
+	</script>
+	<script th:unless="${#lists.isEmpty(flights)}">
+	document.getElementById("flightsTable").addEventListener("click", function(e) {
+		if(e.target.name == "delete" && confirm("Questo Aeroporto verrà eliminato")) {
+			var xhr = new XMLHttpRequest()
+			xhr.open("DELETE", "[[@{/admin/airports}]]" + "?id=" + e.target.parentElement.parentElement.id)
+			xhr.setRequestHeader("[[${_csrf.headerName}]]", "[[${_csrf.token}]]")
+			xhr.onload = function() {
+				if(xhr.status == 204) {
+					document.getElementById("airportsTable").removeChild(
+							document.getElementById(e.target.parentElement.parentElement.id)
+					)
+				} else {
+					alert("L'eliminazione non è riuscita")
+				}
+			}
+			xhr.send()
+		}
+	})
+	</script>
+</th:block>
+
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="routes">
+	<h1 class="mb-4">Gestione delle Tratte</h1>
+	<form class="border border-secondary rounded mb-3 p-3" th:action="@{/admin/routes}" method="post" enctype="application/x-www-form-urlencoded">
+		<p>Aggiungi nuova Tratta</p>
+		<div class="mb-3 row">
+			<label for="departureAirport" class="col-sm-2 col-form-label">Aeroporto di Partenza</label>
+			<div class="col-sm-10">
+				<select name="departureAirport" id="departureAirport" required="required">
+					<option th:each="airport : ${airports}" th:object="${airport}" th:value="*{id}">[[*{getCity()}]] [[*{nome}]]</option>	
+				</select>
+			</div>
+		</div>
+		<div class="mb-3 row">
+			<label for="arrivalAirport" class="col-sm-2 col-form-label">Aeroporto di Destinazione</label>
+			<div class="col-sm-10">
+				<select name="arrivalAirport" id="arrivalAirport" required="required">
+					<option th:each="airport : ${airports}" th:object="${airport}" th:value="*{id}">[[*{getCity()}]] [[*{nome}]]</option>	
+				</select>
+			</div>
+		</div>
+		<div class="mb-3 row">
+			<label for="flightMinutes" class="col-sm-2 col-form-label">Durata Prevista (minuti)</label>
+			<div class="col-sm-10">
+				<input name="flightMinutes" id="flightMinutes" class="form-control" type="number" min="1" required="required" placeholder="Durata (minuti)">
+			</div>
+		</div>
+		<div class="mb-3 row">
+			<label for="departureAirport" class="col-sm-2 col-form-label">Compagnie Aeree</label>
+			<div class="col-sm-10">
+				<select name="airlines" id="airlines" required="required">
+					<option th:each="airline : ${airlines}" th:object="${airline}" th:value="*{id}">[[*{nome}]]</option>	
+				</select>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-auto">
+				<input type="submit" value="Aggiungi Tratta" class="btn btn-primary mb-3">
+			</div>
+		</div>
+		<div th:if="${post == true && success == true}">
+			<p class="text-success mb-0">La Tratta &egrave; stata aggiunta.</p>
+		</div>
+		<div th:if="${post == true && success == false}">
+			<p class="text-danger mb-0">[[${error}]]</p>
+		</div>
+	</form>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Aeroporto Partenza</th>
+				<th>Aeroporto Destinazione</th>
+				<th>Durata Prevista</th>
+				<th>Fornita Da</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody id="routesTable">
+			<tr th:unless="${#lists.isEmpty(routes)}" th:each="route : ${routes}" th:object="${route}" th:id="*{id}">
+				<td>[[*{aeroportoPartenza.getCity()}]] [[*{aeroportoPartenza.nome}]]</td>
+				<td>[[*{aeroportoDestinazione.getCity()}]] [[*{aeroportoDestinazione.nome}]]</td>
+				<td>[[*{durataPrevistaMinuti}]] [[*{durataPrevistaMinuti == 1 ? 'minuto' : 'minuti'}]]</td>
+				<td>[[${#strings.listJoin(route.compagnieAeree.![nome], ', ')}]]</td>
+				<td class="text-center col-1"><img name="delete" style="width: 16px; cursor: pointer" th:src="@{/img/delete.svg}"></td>
+			</tr>
+			<tr th:if="${#lists.isEmpty(routes)}">
+				<td colspan="5">Non esiste alcun dato.</td>
+			</tr>
+		</tbody>
+	</table>
+	<script>
+	window.addEventListener("DOMContentLoaded", function(e) {
+		new Selectr("#departureAirport", { defaultSelected: false, placeholder: "Seleziona l'Aeroporto di Partenza", messages: { noResults: "Nessun Aeroporto con questo nome" } });
+		new Selectr("#arrivalAirport", { defaultSelected: false, placeholder: "Seleziona l'Aeroporto di Destinazione", messages: { noResults: "Nessun Aeroporto con questo nome" } });
+		new Selectr("#airlines", { defaultS1elected: false, multiple: true, clearable: true, allowDeselect: true, placeholder: "Seleziona le Compagnie Aeree che forniscono questa tratta", messages: { noResults: "Nessua Compagnia Aerea con questo nome" } });
+	})
+	</script>
+	<script th:unless="${#lists.isEmpty(routes)}">
+	document.getElementById("routesTable").addEventListener("click", function(e) {
+		if(e.target.name == "delete" && confirm("Questo Aeroporto verrà eliminato")) {
+			var xhr = new XMLHttpRequest()
+			xhr.open("DELETE", "[[@{/admin/airports}]]" + "?id=" + e.target.parentElement.parentElement.id)
+			xhr.setRequestHeader("[[${_csrf.headerName}]]", "[[${_csrf.token}]]")
+			xhr.onload = function() {
+				if(xhr.status == 204) {
+					document.getElementById("airportsTable").removeChild(
+							document.getElementById(e.target.parentElement.parentElement.id)
+					)
+				} else {
+					alert("L'eliminazione non è riuscita")
+				}
+			}
+			xhr.send()
+		}
+	})
+	</script>
+</th:block>
+
+</html>

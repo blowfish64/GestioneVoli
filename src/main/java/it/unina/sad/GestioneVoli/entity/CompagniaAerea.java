@@ -13,8 +13,16 @@ import javax.persistence.OneToMany;
 public class CompagniaAerea {
 	@Id @GeneratedValue(strategy = GenerationType.AUTO) private Long id;
 	private String nome;
-	@OneToMany private List<Aereo> aerei;
-	@ManyToMany private List<Tratta> tratte;
+	@OneToMany(mappedBy = "compagniaAerea") private List<Aereo> aerei;
+	@ManyToMany(mappedBy = "compagnieAeree") private List<Tratta> tratte;
+
+	public CompagniaAerea() {
+		super();
+	}
+
+	public CompagniaAerea(String nome) {
+		this.nome = nome;
+	}
 
 	public Long getId() {
 		return id;

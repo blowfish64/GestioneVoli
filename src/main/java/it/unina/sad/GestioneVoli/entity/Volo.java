@@ -1,19 +1,16 @@
 package it.unina.sad.GestioneVoli.entity;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
 public class Volo {
-	@Id @GeneratedValue(strategy = GenerationType.AUTO) private Long id;
-	private String codice;
+	@Id private String codice;
 	private Timestamp dataOraPartenza;
 	private Double prezzoBase;
 	private int postiPasseggeroRestanti;
@@ -21,14 +18,22 @@ public class Volo {
 	private int postiBagaglioStivaRestanti;
 	@ManyToOne private Aereo aereo;
 	@ManyToOne private Tratta tratta;
-	@OneToMany private List<Biglietto> biglietti;
+	@OneToMany(mappedBy = "volo") private List<Biglietto> biglietti;
 
-	public Long getId() {
-		return id;
+	public Volo() {
+		super();
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public Volo(String codice, Timestamp dataOraPartenza, Double prezzoBase, Integer postiPasseggeroRestanti,
+			Integer postiBagaglioCabinaRestanti, Integer postiBagaglioStivaRestanti, Aereo aereo, Tratta tratta) {
+		this.codice = codice;
+		this.dataOraPartenza = dataOraPartenza;
+		this.prezzoBase = prezzoBase;
+		this.postiPasseggeroRestanti = postiPasseggeroRestanti;
+		this.postiBagaglioCabinaRestanti = postiBagaglioCabinaRestanti;
+		this.postiBagaglioStivaRestanti = postiBagaglioStivaRestanti;
+		this.aereo = aereo;
+		this.tratta = tratta;
 	}
 
 	public String getCodice() {

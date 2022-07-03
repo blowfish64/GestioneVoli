@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="airplanes">
+	<h1 class="mb-4">Gestione degli Aerei</h1>
+	<form class="border border-secondary rounded mb-3 p-3" th:action="@{/admin/airplanes}" method="post" enctype="application/x-www-form-urlencoded">
+		<p>Aggiungi nuovo Aereo</p>
+		<div class="mb-3 row">
+			<label for="airline" class="col-sm-2 col-form-label">Compagnia Aerea</label>
+			<div class="col-sm-10">
+				<select name="airline" id="airline" required="required" th:attrappend="autofocus=${post} ? 'autofocus'">
+					<option th:each="airline : ${airlines}" th:object="${airline}" th:value="*{id}">[[*{nome}]]</option>	
+				</select>
+			</div>
+		</div>
+		<div class="mb-3 row">
+			<div class="col">
+				<input class="form-control" type="text" name="serialNumber" required="required" placeholder="Numero di Matricola">
+			</div>
+			<div class="col">
+				<input class="form-control" type="number" name="numPassengers" min="1" required="required" placeholder="Posti Passeggeri">
+			</div>
+			<div class="col">
+				<input class="form-control" type="number" name="numCabin" min="1" required="required" placeholder="Capienza Cabina">
+			</div>
+			<div class="col">
+				<input class="form-control" type="number" name="numBulk" min="1" required="required" placeholder="Capienza Stiva">
+			</div>
+			<div class="col-auto">
+				<input type="submit" value="Aggiungi" class="btn btn-primary mb-3">
+			</div>
+		</div>
+		<div th:if="${post == true && success == true}">
+			<p class="text-success mb-0">L'aereo &egrave; stato aggiunto.</p>
+		</div>
+		<div th:if="${post == true && success == false}">
+			<p class="text-danger mb-0">[[${error}]]</p>
+		</div>
+	</form>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Compagnia Aerea</th>
+				<th>Numero di Matricola</th>
+				<th>Posti Passeggeri</th>
+				<th>Capienza Bagagli in Cabina</th>
+				<th>Capienza Bagagli in Stiva</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody id="airplanesTable">
+			<tr th:unless="${#lists.isEmpty(airplanes)}" th:each="airplane : ${airplanes}" th:object="${airplane}" th:id="*{id}">
+				<td>[[*{compagniaAerea.nome}]]</td>
+				<td>[[*{matricola}]]</td>
+				<td>[[*{capienzaPasseggeri}]]</td>
+				<td>[[*{capienzaBagagliCabina}]]</td>
+				<td>[[*{capienzaBagagliStiva}]]</td>
+				<td class="text-center col-1"><img name="delete" style="width: 16px; cursor: pointer" th:src="@{/img/delete.svg}"></td>
+			</tr>
+			<tr th:if="${#lists.isEmpty(airplanes)}">
+				<td colspan="6">Non esiste alcun dato.</td>
+			</tr>
+		</tbody>
+	</table>
+	<script>
+	window.addEventListener("DOMContentLoaded", function(e) {
+		new Selectr("#airline", { defaultSelected: false, placeholder: "Seleziona la Compagnia Aerea", messages: { noResults: "Nessuna Compagnia Aerea con questo nome" } });
+	})
+	</script>
+	<script th:unless="${#lists.isEmpty(routes)}">
+	document.getElementById("airportsTable").addEventListener("click", function(e) {
+		if(e.target.name == "delete" && confirm("Questo Aeroporto verrà eliminato")) {
+			var xhr = new XMLHttpRequest()
+			xhr.open("DELETE", "[[@{/admin/airports}]]" + "?id=" + e.target.parentElement.parentElement.id)
+			xhr.setRequestHeader("[[${_csrf.headerName}]]", "[[${_csrf.token}]]")
+			xhr.onload = function() {
+				if(xhr.status == 204) {
+					document.getElementById("airportsTable").removeChild(
+							document.getElementById(e.target.parentElement.parentElement.id)
+					)
+				} else {
+					alert("L'eliminazione non è riuscita")
+				}
+			}
+			xhr.send()
+		}
+	})
+	</script>
+</th:block>
+
+</html>

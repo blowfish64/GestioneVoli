@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="airlines">
+	<h1 class="mb-4">Gestione delle Compagnie Aeree</h1>
+	<form class="border border-secondary rounded mb-3 p-3" th:action="@{/admin/airlines}" method="post" enctype="application/x-www-form-urlencoded">
+		<p>Aggiungi nuova Compagnia Aerea</p>
+		<div class="row">
+			<div class="col-auto">
+				<input class="form-control" type="text" name="airlineName" required="required" placeholder="Nome Compagnia Aerea" th:attrappend="autofocus=${post} ? 'autofocus'">
+			</div>
+			<div class="col-auto">
+				<input type="submit" value="Aggiungi" class="btn btn-primary mb-3">
+			</div>
+		</div>
+		<div th:if="${post == true && success == true}">
+			<p class="text-success mb-0">La Compagnia Aerea &egrave; stata aggiunta.</p>
+		</div>
+		<div th:if="${post == true && success == false}">
+			<p class="text-danger mb-0">[[${error}]]</p>
+		</div>
+	</form>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Nome</th>
+				<th>Aerei Posseduti</th>
+				<th>Tratte Fornite</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody id="airlinesTable">
+			<tr th:unless="${#lists.isEmpty(airlines)}" th:each="airline : ${airlines}" th:object="${airline}" th:id="*{id}">
+				<td>[[*{nome}]]</td>
+				<td>[[*{aerei != null ? aerei.size() : 0}]]</td>
+				<td>[[*{tratte != null ? tratte.size() : 0}]]</td>
+				<td class="text-center col-1"><img name="delete" style="width: 16px; cursor: pointer" th:src="@{/img/delete.svg}"></td>
+			</tr>
+			<tr th:if="${#lists.isEmpty(airlines)}">
+				<td colspan="4">Non esiste alcun dato.</td>
+			</tr>
+		</tbody>
+	</table>
+	<script th:unless="${#lists.isEmpty(airlines)}">
+	document.getElementById("airlinesTable").addEventListener("click", function(e) {
+		if(e.target.name == "delete" && confirm("Questa Compagnia Aerea verrà eliminata")) {
+			var xhr = new XMLHttpRequest()
+			xhr.open("DELETE", "[[@{/admin/airlines}]]" + "?id=" + e.target.parentElement.parentElement.id)
+			xhr.setRequestHeader("[[${_csrf.headerName}]]", "[[${_csrf.token}]]")
+			xhr.onload = function() {
+				if(xhr.status == 204) {
+					document.getElementById("airlinesTable").removeChild(
+							document.getElementById(e.target.parentElement.parentElement.id)
+					)
+				} else {
+					alert("L'eliminazione non è riuscita")
+				}
+			}
+			xhr.send()
+		}
+	})
+	</script>
+</th:block>
+
+</html>

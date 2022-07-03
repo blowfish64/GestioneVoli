@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="airports">
+	<h1 class="mb-4">Gestione degli Aeroporti</h1>
+	<form class="border border-secondary rounded mb-3 p-3" th:action="@{/admin/airports}" method="post" enctype="application/x-www-form-urlencoded">
+		<p>Aggiungi nuovo Aeroporto</p>
+		<div class="row">
+			<div class="col-auto">
+				<input class="form-control" type="text" name="airportName" required="required" placeholder="Nome Aeroporto" th:attrappend="autofocus=${post} ? 'autofocus'">
+			</div>
+			<div class="col-auto">
+				<input class="form-control" type="text" name="airportCity" required="required" placeholder="Città">
+			</div>
+			<div class="col-auto">
+				<input type="submit" value="Aggiungi" class="btn btn-primary mb-3">
+			</div>
+		</div>
+		<div th:if="${post == true && success == true}">
+			<p class="text-success mb-0">L'Aeroporto &egrave; stato aggiunto.</p>
+		</div>
+		<div th:if="${post == true && success == false}">
+			<p class="text-danger mb-0">[[${error}]]</p>
+		</div>
+	</form>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Nome</th>
+				<th>Citt&agrave;</th>
+				<th>Tratte Associate</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody id="airportsTable">
+			<tr th:unless="${#lists.isEmpty(airports)}" th:each="airport : ${airports}" th:object="${airport}" th:id="*{id}">
+				<td>[[*{nome}]]</td>
+				<td>[[*{getCity()}]]</td>
+				<td>[[*{(trattePartenza != null && tratteDestinazione != null) ? trattePartenza.size() + tratteDestinazione.size() : 0}]]</td>
+				<td class="text-center col-1"><img name="delete" style="width: 16px; cursor: pointer" th:src="@{/img/delete.svg}"></td>
+			</tr>
+			<tr th:if="${#lists.isEmpty(airports)}">
+				<td colspan="4">Non esiste alcun dato.</td>
+			</tr>
+		</tbody>
+	</table>
+	<script th:unless="${#lists.isEmpty(airports)}">
+	document.getElementById("airportsTable").addEventListener("click", function(e) {
+		if(e.target.name == "delete" && confirm("Questo Aeroporto verrà eliminato e le Tratte associate verranno automaticamente eliminate")) {
+			var xhr = new XMLHttpRequest()
+			xhr.open("DELETE", "[[@{/admin/airports}]]" + "?id=" + e.target.parentElement.parentElement.id)
+			xhr.setRequestHeader("[[${_csrf.headerName}]]", "[[${_csrf.token}]]")
+			xhr.onload = function() {
+				if(xhr.status == 204) {
+					document.getElementById("airportsTable").removeChild(
+							document.getElementById(e.target.parentElement.parentElement.id)
+					)
+				} else {
+					alert("L'eliminazione non è riuscita")
+				}
+			}
+			xhr.send()
+		}
+	})
+	</script>
+</th:block>
+
+</html>

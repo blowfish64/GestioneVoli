@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it-IT">
+<head>
+<th:block th:replace="~{fragments/general :: headTags}"></th:block>
+<title>Gestione Voli</title>
+</head>
+<body>
+	<header th:replace="~{fragments/general :: header}"></header>
+
+	<main class="container mw-100">
+		<div class="row pt-4">
+			<nav class="col-2 px-0">
+				<ul>
+					<li><a th:href="@{/admin/airlines}" th:class="${#strings.equals(page, '/admin/airlines')} ? 'font-weight-bold'">Compagnie
+							Aeree</a></li>
+					<li><a th:href="@{/admin/airports}" th:class="${#strings.equals(page, '/admin/airports')} ? 'font-weight-bold'">Aeroporti</a></li>
+					<li><a th:href="@{/admin/routes}" th:class="${#strings.equals(page, '/admin/routes')} ? 'font-weight-bold'">Tratte</a></li>
+					<li><a th:href="@{/admin/airplanes}" th:class="${#strings.equals(page, '/admin/airplanes')} ? 'font-weight-bold'">Aerei</a></li>
+					<li><a th:href="@{/admin/flights}" th:class="${#strings.equals(page, '/admin/flights')} ? 'font-weight-bold'">Voli</a></li>
+					<li><a th:href="@{/admin/users}" th:class="${#strings.equals(page, '/admin/users')} ? 'font-weight-bold'">Utenti</a></li>
+				</ul>
+			</nav>
+			<section class="col">
+				<th:block th:replace="${#strings.equals(page, '/admin/airlines')} ? ~{admin-airlines :: airlines} : _"></th:block>
+				<th:block th:replace="${#strings.equals(page, '/admin/airports')} ? ~{admin-airports :: airports } : _"></th:block>
+				<th:block th:replace="${#strings.equals(page, '/admin/routes')} ? ~{admin-routes :: routes } : _"></th:block>
+				<th:block th:replace="${#strings.equals(page, '/admin/airplanes')} ? ~{admin-airplanes :: airplanes } : _"></th:block>
+				<th:block th:replace="${#strings.equals(page, '/admin/flights')} ? ~{admin-flights :: flights } : _"></th:block>
+				<th:block th:replace="${#strings.equals(page, '/admin/users')} ? ~{admin-users :: users} : _"></th:block>
+			</section>
+		</div>
+	</main>
+
+	<footer th:replace="~{fragments/general :: footer}"></footer>
+</body>
+</html>

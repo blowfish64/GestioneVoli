@@ -1,7 +1,9 @@
 package it.unina.sad.GestioneVoli.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AereoRepository extends CrudRepository<AereoRepository, Long> {
+import it.unina.sad.GestioneVoli.entity.Aereo;
+
+public interface AereoRepository extends JpaRepository<Aereo, Long> {
 
 }

@@ -16,7 +16,7 @@ public class Passeggero {
 	private String eMail;
 	private String documentoIdentità;
 	private String codiceFiscale;
-	@OneToMany private List<Biglietto> biglietti;
+	@OneToMany(mappedBy = "passeggero") private List<Biglietto> biglietti;
 
 	public Long getId() {
 		return id;

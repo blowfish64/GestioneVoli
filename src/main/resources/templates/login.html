@@ -9,7 +9,7 @@
 		<div>
 			<img class="img-fluid my-4" th:src="@{/img/takeoff.svg}">
 		</div>
-		<form th:action="@{/login}" method="post" style="max-width: 350px; margin: 0 auto;">
+		<form name="loginForm" th:action="@{/login}" method="post" style="max-width: 350px; margin: 0 auto;">
 
 			<div th:if="${param.error}">
 				<p class="text-danger">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</p>
@@ -20,7 +20,7 @@
 			</div>
 
 			<div class="border border-secondary p-3 rounded">
-				<p>Accedi a Gestione Voli</p>
+				<p>Accesso a Gestione Voli</p>
 				<p>
 					<input type="text" name="email" class="form-control" placeholder="Nome Utente" required autofocus />
 				</p>
@@ -31,9 +31,14 @@
 					<label><input type="checkbox" name="remember-me" />&nbsp;Ricordami</label>
 				</p>
 				<p>
-					<input type="submit" value="Accedi" class="btn btn-primary" />
+					<button type="submit" class="btn btn-primary mx-1">Accedi</button>
+					<button type="submit" class="btn btn-secondary mx-1" form="guestLoginForm">Accedi come Ospite</button>
 				</p>
 			</div>
+		</form>
+		<form id="guestLoginForm" th:action="@{/login}" method="post">
+			<input type="hidden" name="email" value="guest"/>
+			<input type="hidden" name="password" value=""/>
 		</form>
 	</div>
 </body>

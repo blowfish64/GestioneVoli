@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="users">
+	<h1 class="mb-4">Gestione degli Utenti</h1>
+	<form class="border border-secondary rounded mb-3 p-3" th:action="@{/admin/users}" method="post" enctype="application/x-www-form-urlencoded">
+		<p>Aggiungi nuovo Utente</p>
+		<div class="row">
+			<div class="col-auto">
+				<input type="text" name="email" required="required" placeholder="Nome Utente" th:attrappend="autofocus=${post} ? 'autofocus'" class="form-control">
+			</div>
+			<div class="col-auto">
+				<input type="password" name="password" placeholder="Password" required="required" class="form-control">
+			</div>
+			<div class="col-auto">
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="radio" name="role" id="user" value="user" required="required">
+					<label class="form-check-label" for="user">Utente</label>
+				</div>
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="radio" name="role" id="admin" value="admin">
+					<label class="form-check-label" for="admin">Amministratore</label>
+				</div>
+			</div>
+			<div class="col-auto">
+				<input type="submit" value="Aggiungi" class="btn btn-primary mb-3">
+			</div>
+		</div>
+		<div th:if="${post == true && success == true}">
+			<p class="text-success mb-0">L'utente &egrave; stato aggiunto.</p>
+		</div>
+		<div th:if="${post == true && success == false}">
+			<p class="text-danger mb-0">[[${error}]]</p>
+		</div>
+	</form>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Nome Utente</th>
+				<th>Ruolo</th>
+				<th>Stato</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody id="usersTable">
+			<tr th:each="user : ${users}" th:object="${user}" th:id="*{username}">
+				<td>[[*{username}]]</td>
+				<td>[[*{authorities}]]</td>
+				<td>[[*{isEnabled() ? 'Attivo' : 'Bloccato'}]]</td>
+				<td class="text-center col-1">
+					<img name="resetPassword" style="width: 16px; cursor: pointer" th:src="@{/img/safe.svg}" title="Reimposta Password">
+					<img name="delete" style="width: 16px; cursor: pointer" th:src="@{/img/delete.svg}" title="Disabilita">
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<script>
+	document.getElementById("usersTable").addEventListener("click", function(e) {
+		if(e.target.name == "resetPassword") {
+			var newPassword = prompt("Inserire la nuova Password per l'Utente")
+			if(newPassword == null) {
+				return
+			} else if(newPassword.length == 0) {
+				alert("La Password inserita è vuota")
+				return
+			}
+
+			var xhr = new XMLHttpRequest()
+			xhr.open("PUT", "[[@{/admin/users}]]")
+			xhr.setRequestHeader("[[${_csrf.headerName}]]", "[[${_csrf.token}]]")
+			xhr.onload = function() {
+				if(xhr.status == 204) {
+					alert("La Password è stata reimpostata")
+				} else {
+					alert("La reimpostazione non è riuscita")
+				}
+			}
+			var data = new FormData()
+			data.append("username", e.target.parentElement.parentElement.id)
+			data.append("password", newPassword)
+			xhr.send(data)
+		}
+	})
+	</script>
+</th:block>
+
+</html>
