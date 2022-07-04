@@ -31,6 +31,17 @@ public class TrattaService {
 		return trattaRepository.findById(id).orElse(null);
 	}
 
+	public Tratta getByDepartureArrival(Long departure, Long arrival) throws IllegalStateException {
+		if(!aeroportoService.exists(departure) || !aeroportoService.exists(arrival))
+			throw new IllegalStateException("Questi Aeroporti non esistono!");
+
+		if(departure.equals(arrival))
+			throw new IllegalStateException("Partenza e Destinazione coincidono!");
+
+		Aeroporto partenza = aeroportoService.get(departure), destinazione = aeroportoService.get(arrival);
+		return trattaRepository.findByAeroportoPartenzaAndAeroportoDestinazione(partenza, destinazione);
+	}
+
 	public void add(Long departure, Long arrival, Long flightMinutes, List<Long> airlines) throws IllegalStateException {
 		if(!aeroportoService.exists(departure) || !aeroportoService.exists(arrival))
 			throw new IllegalStateException("Questi Aeroporti non esistono!");

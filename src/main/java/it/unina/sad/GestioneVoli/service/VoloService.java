@@ -3,6 +3,7 @@ package it.unina.sad.GestioneVoli.service;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ public class VoloService {
 
 	@Autowired
 	private TrattaService trattaService;
+
+	@Autowired AeroportoService aeroportoService;
 
 	public List<Volo> getAll() {
 		return voloRepository.findAll();
@@ -58,5 +61,41 @@ public class VoloService {
 		Tratta tratta = trattaService.getById(route);
 		Volo volo = new Volo(code, dataOraPartenza, ticketPrice, aereo.getCapienzaPasseggeri(), aereo.getCapienzaBagagliCabina(), aereo.getCapienzaBagagliStiva(), aereo, tratta);
 		voloRepository.save(volo);
+	}
+
+	public List<Volo> search(String flightDateTime, Long departureAirport, Long arrivalAirport) throws IllegalStateException {
+		Tratta tratta = null;
+		if(departureAirport != null && arrivalAirport != null) {
+			if(!aeroportoService.exists(departureAirport) || !aeroportoService.exists(arrivalAirport))
+				throw new IllegalStateException("Partenza o Destinazione non valida!");
+
+			tratta = trattaService.getByDepartureArrival(departureAirport, arrivalAirport);
+			if(tratta == null)
+				throw new IllegalStateException("Gli Aeroporti non sono collegati!");
+		} else if((departureAirport == null) != (arrivalAirport == null))
+			throw new IllegalStateException("Tratta Incompleta!");
+
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Timestamp dataOraPartenza = null;
+
+		if(flightDateTime != null && !flightDateTime.isEmpty())
+			try {
+				Date d = df.parse(flightDateTime);
+				if(d.before(new Date()))
+					throw new IllegalStateException("Data/Ora Partenza già passata!");
+				else
+					dataOraPartenza = new Timestamp(d.getTime());
+			} catch(ParseException e) {
+				throw new IllegalStateException("Data/Ora Partenza non valida!");
+			}
+
+		if(tratta != null && dataOraPartenza == null)
+			return voloRepository.findByTratta(tratta);
+		else if(tratta == null && dataOraPartenza != null)
+			return voloRepository.findByDataOraPartenzaGreaterThanEqual(dataOraPartenza);
+		else if(tratta != null && dataOraPartenza != null)
+			return voloRepository.findByTrattaAndDataOraPartenzaGreaterThanEqual(tratta, dataOraPartenza);
+		else
+			throw new IllegalStateException("Non è stato indicato nessun parametro di ricerca!");
 	}
 }

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="flights">
+	<h1 class="mb-4">Ricerca dei Voli</h1>
+	<form class="border border-secondary rounded mb-3 p-3" th:action="@{/flights}" method="get">
+		<div class="mb-3 row">
+			<label for="flightDateTime" class="col-sm-2 col-form-label">Data e Ora di Partenza del Volo</label>
+			<div class="col-sm-10">
+				<input class="form-control" type="text" name="flightDateTime" id="flightDateTime" placeholder="Data e Ora di Partenza del Volo" th:value="${param.flightDateTime}">
+			</div>
+		</div>
+		<hr>
+		<div class="mb-3 row">
+			<label for="departureAirport" class="col-sm-2 col-form-label">Aeroporto di Partenza</label>
+			<div class="col-sm-10">
+				<select name="departureAirport" id="departureAirport">
+					<option th:each="airport : ${airports}" th:object="${airport}" th:value="*{id}" th:with="selectedDeparture=${#strings.equals(param.departureAirport, #strings.toString(airport.id))}" th:attrappend="selected=${selectedDeparture} ? 'selected'">[[*{getCity()}]] [[*{nome}]]</option>
+				</select>
+			</div>
+		</div>
+		<div class="mb-3 row">
+			<label for="arrivalAirport" class="col-sm-2 col-form-label">Aeroporto di Destinazione</label>
+			<div class="col-sm-10">
+				<select name="arrivalAirport" id="arrivalAirport">
+					<option th:each="airport : ${airports}" th:object="${airport}" th:value="*{id}" th:with="selectedArrival=${#strings.equals(param.arrivalAirport, #strings.toString(airport.id))}" th:attrappend="selected=${selectedArrival} ? 'selected'">[[*{getCity()}]] [[*{nome}]]</option>
+				</select>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-auto">
+				<input type="submit" value="Cerca Volo" class="btn btn-primary mb-3">
+			</div>
+		</div>
+	</form>
+	<table class="table table-striped" th:if="${success != false} and (${param.keySet().contains('departureAirport')} and ${param.keySet().contains('arrivalAirport')} or ${param.keySet().contains('flightDateTime')})">
+		<thead>
+			<tr>
+				<th>Codice</th>
+				<th>Data/Ora Partenza</th>
+				<th>Prezzo Base</th>
+				<th>Posti Passeggeri<br>Disponibili</th>
+				<th>Posti Bagagli in<br>Cabina Disponibili</th>
+				<th>Posti Bagagli in<br>Stiva Disponibili</th>
+				<th>Compagnia Aerea</th>
+				<th>Tratta</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody id="flightsTable">
+			<tr th:unless="${#lists.isEmpty(flights)}" th:each="flight : ${flights}" th:object="${flight}" th:id="*{codice}">
+				<td>[[*{codice}]]</td>
+				<td>[[${#dates.format(flight.dataOraPartenza, 'dd/MM/yyyy HH:mm')}]]</td>
+				<td>[[*{prezzoBase}]] €</td>
+				<td>[[*{{postiPasseggeroRestanti}}]]</td>
+				<td>[[*{{postiBagaglioCabinaRestanti}}]]</td>
+				<td>[[*{{postiBagaglioStivaRestanti}}]]</td>
+				<td th:object="${flight.aereo}">[[*{compagniaAerea.nome}]]</td>
+				<td th:object="${flight.tratta}">[[*{aeroportoPartenza.getCity()}]] [[*{aeroportoPartenza.nome}]] &#x25B6; [[*{aeroportoDestinazione.getCity()}]] [[*{aeroportoDestinazione.nome}]]</td>
+				<td>Prenota</td>
+			</tr>
+			<tr th:if="${#lists.isEmpty(flights)}">
+				<td colspan="9">Non esiste alcun dato.</td>
+			</tr>
+		</tbody>
+	</table>
+	<div th:if="${success == false}">
+		<p class="text-danger mb-0">[[${error}]]</p>
+	</div>
+	<script>
+	window.addEventListener("DOMContentLoaded", function(e) {
+		new Selectr("#departureAirport", { defaultSelected: false, clearable: true, placeholder: "Seleziona l'Aeroporto di Partenza", messages: { noResults: "Nessun Aeroporto con questo nome" } });
+		new Selectr("#arrivalAirport", { defaultSelected: false, clearable: true, placeholder: "Seleziona l'Aeroporto di Destinazione", messages: { noResults: "Nessun Aeroporto con questo nome" } });
+		new Pikaday({
+	        field: document.getElementById("flightDateTime"),
+	        firstDay: 1,
+	        minDate: new Date(),
+	        maxDate: new Date(2099, 12, 31),
+	        yearRange: [2022,2099]
+	    });
+	})
+	</script>
+</th:block>
+
+</html>
