@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="book">
+	<h1 class="mb-4">Prenota un Biglietto per il Volo</h1>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Codice</th>
+				<th>Data/Ora Partenza</th>
+				<th>Prezzo Base</th>
+				<th>Compagnia Aerea</th>
+				<th>Tratta</th>
+			</tr>
+		</thead>
+		<tbody id="flightDetails">
+			<tr th:if="${flight}" th:object="${flight}">
+				<td>[[*{codice}]]</td>
+				<td>[[${#dates.format(flight.dataOraPartenza, 'dd/MM/yyyy HH:mm')}]]</td>
+				<td>[[*{prezzoBase}]] €</td>
+				<td th:object="${flight.aereo}">[[*{compagniaAerea.nome}]]</td>
+				<td th:object="${flight.tratta}">[[*{aeroportoPartenza.getCity()}]] [[*{aeroportoPartenza.nome}]] &#x25B6; [[*{aeroportoDestinazione.getCity()}]] [[*{aeroportoDestinazione.nome}]]</td>
+			</tr>
+			<tr th:unless="${flight}">
+				<td colspan="5" class="text-danger">Questo Volo non &egrave; stato trovato.</td>
+			</tr>
+		</tbody>
+	</table>
+	<h5>Informazioni sui Passeggeri</h5>
+	<form class="border border-secondary rounded mb-3 p-3" name="passenger1" id="passengerForm">
+		<div class="mb-3 row">
+			<label for="numLuggageCabin" class="col-sm-2 col-form-label text-end">Numero Bagagli in Cabina</label>
+			<div class="col-sm-1">
+				<input class="form-control" type="number" name="numLuggageCabin" placeholder="Cabina" min="0" th:max="${flight.postiBagaglioCabinaRestanti}">
+			</div>
+
+			<label for="numLuggageBulk" class="col-sm-2 col-form-label text-end">Numero Bagagli in Stiva</label>
+			<div class="col-sm-1">
+				<input class="form-control" type="number" name="numLuggageBulk" placeholder="Stiva" min="0" th:max="${flight.postiBagaglioStivaRestanti}">
+			</div>
+
+			<label for="confirmEMail" class="col-sm-2 col-form-label text-end">E-Mail per Ricezione</label>
+			<div class="col-sm-4">
+				<input class="form-control" type="email" name="confirmEMail" placeholder="E-Mail">
+			</div>
+		</div>
+		<hr>
+		<div class="mb-3 row">
+			<label for="firstName" class="col-sm-1 col-form-label text-end">Nome</label>
+			<div class="col-sm-2">
+				<input class="form-control" type="text" name="firstName" placeholder="Nome">
+			</div>
+
+			<label for="familyName" class="col-sm-1 col-form-label text-end">Cognome</label>
+			<div class="col-sm-2">
+				<input class="form-control" type="text" name="familyName" placeholder="Cognome">
+			</div>
+
+			<label for="cardId" class="col-sm-1 col-form-label text-end">Carta Identit&agrave;</label>
+			<div class="col-sm-2">
+				<input class="form-control" type="text" name="cardId" placeholder="Numero Carta Identit&agrave;">
+			</div>
+
+			<label for="uniqueId" class="col-sm-1 col-form-label text-end">Codice Fiscale</label>
+			<div class="col-sm-2">
+				<input class="form-control" type="text" name="uniqueId" placeholder="Codice Fiscale" min="16" max="16">
+			</div>
+		</div>
+		<hr>
+		<div class="row">
+			<div class="col-auto">
+				<p>Totale Biglietto: <span>[[${flight.prezzoBase}]] €</span></p>
+			</div>
+			<div class="col">
+			</div>
+			<div class="col-auto" style="display: none">
+				<button class="btn btn-danger" id="deletePassenger" type="button">Elimina Passeggero</button>
+			</div>
+		</div>
+	</form>
+	<div class="row" id="afterForm">
+		<div class="col-auto">
+			<button class="btn btn-secondary" id="newPassenger">Aggiungi Passeggero</button>
+		</div>
+		<div class="col">
+		</div>
+		<div class="col-auto">
+			<button class="btn btn-info" id="confirmPurchase" type="button">Acquista Biglietti</button>
+		</div>
+	</div>
+	<div th:if="${success == false}">
+		<p class="text-danger mb-0">[[${error}]]</p>
+	</div>
+	<script>
+	var updateTotal = function(e) {
+		if(e.target instanceof HTMLInputElement && (e.target.name == "numLuggageCabin" || e.target.name == "numLuggageBulk")) {
+			var form = e.target.form
+			var newTotal = Math.max((form.elements.numLuggageCabin.valueAsNumber || 0) - 1, 0) * 10 + (form.elements.numLuggageBulk.valueAsNumber || 0) * 20 + [[${flight.prezzoBase}]]
+			form.querySelector("span").textContent = newTotal.toFixed(1) + " €"
+		}
+	}
+
+	document.getElementById("passengerForm").addEventListener("input", updateTotal)
+
+	document.getElementById("newPassenger").addEventListener("click", function(e) {
+		var newForm = document.getElementById("passengerForm").cloneNode(true)
+		newForm.addEventListener("input", updateTotal)
+		newForm.id = "passenger" + String(document.getElementsByTagName("form").length + 1)
+		newForm.name = newForm.id
+		var deletePassengerElement = newForm.querySelector("button")
+		deletePassengerElement.addEventListener("click", (function(newForm) { return function(e) {
+			e.preventDefault()
+			newForm.parentElement.removeChild(newForm)
+		}})(newForm))
+		deletePassengerElement.parentElement.style.display = ""
+		var afterFormElement = document.getElementById("afterForm")
+		afterFormElement.parentElement.insertBefore(newForm, afterFormElement)
+	})
+
+	document.getElementById("confirmPurchase").addEventListener("click", function(e) {
+		e.preventDefault()
+		var data = new Array()
+		Array.prototype.forEach.call(document.forms, function(form) {
+			var object = new Object()
+			Array.prototype.forEach.call(form.elements, function(element) {
+				if(element instanceof HTMLInputElement) {
+					object[element.name] = element.value
+				}
+			})
+			data.push(object)
+		})
+		var xhr = new XMLHttpRequest()
+		xhr.open("POST", "[[@{/flights/book(flight=${flight.codice})}]]")
+		xhr.setRequestHeader("[[${_csrf.headerName}]]", "[[${_csrf.token}]]")
+		xhr.setRequestHeader("Content-Type", "application/json")
+		xhr.send(JSON.stringify(data))
+	})
+	</script>
+</th:block>
+
+</html>

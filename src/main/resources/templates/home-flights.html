@@ -57,7 +57,7 @@
 				<td>[[*{{postiBagaglioStivaRestanti}}]]</td>
 				<td th:object="${flight.aereo}">[[*{compagniaAerea.nome}]]</td>
 				<td th:object="${flight.tratta}">[[*{aeroportoPartenza.getCity()}]] [[*{aeroportoPartenza.nome}]] &#x25B6; [[*{aeroportoDestinazione.getCity()}]] [[*{aeroportoDestinazione.nome}]]</td>
-				<td>Prenota</td>
+				<td><a th:href="@{/flights/book(flight=*{codice})}"><img src="/img/check.svg" style="width: 16px" title="Prenota"></a></td>
 			</tr>
 			<tr th:if="${#lists.isEmpty(flights)}">
 				<td colspan="9">Non esiste alcun dato.</td>

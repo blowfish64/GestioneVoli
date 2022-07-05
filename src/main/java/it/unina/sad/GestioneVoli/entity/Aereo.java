@@ -1,10 +1,13 @@
 package it.unina.sad.GestioneVoli.entity;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -17,6 +20,7 @@ public class Aereo {
 	private Integer capienzaBagagliCabina;
 	private Integer capienzaBagagliStiva;
 	@ManyToOne @OnDelete(action = OnDeleteAction.CASCADE) private CompagniaAerea compagniaAerea;
+	@OneToMany(mappedBy = "aereo") private List<Volo> voli;
 
 	public Aereo() {
 		super();
@@ -82,6 +86,11 @@ public class Aereo {
 		this.compagniaAerea = compagniaAerea;
 	}
 
-//	@Formula("(SELECT )")
-//	public Long numeroTratte;
+	public List<Volo> getVoli() {
+		return voli;
+	}
+
+	public void setVoli(List<Volo> voli) {
+		this.voli = voli;
+	}
 }

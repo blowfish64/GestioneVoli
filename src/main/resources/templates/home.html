@@ -16,6 +16,7 @@
 			</nav>
 			<section class="col">
 				<th:block th:replace="${#strings.equals(page, '/flights')} ? ~{home-flights :: flights} : _"></th:block>
+				<th:block th:replace="${#strings.equals(page, '/flights/book')} ? ~{home-book :: book} : _"></th:block>
 			</section>
 		</div>
 	</main>

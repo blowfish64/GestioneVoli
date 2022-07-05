@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import it.unina.sad.GestioneVoli.entity.Aereo;
 import it.unina.sad.GestioneVoli.entity.Tratta;
@@ -26,10 +28,19 @@ public class VoloService {
 	@Autowired
 	private TrattaService trattaService;
 
-	@Autowired AeroportoService aeroportoService;
+	@Autowired
+	private AeroportoService aeroportoService;
 
 	public List<Volo> getAll() {
 		return voloRepository.findAll();
+	}
+
+	public Volo getById(String id) {
+		return voloRepository.findById(id).orElse(null);
+	}
+
+	public Boolean exists(String id) {
+		return voloRepository.existsById(id);
 	}
 
 	public void add(String code, String flightDateTime, Double ticketPrice, Long airplane, Long route) throws IllegalStateException {
@@ -97,5 +108,39 @@ public class VoloService {
 			return voloRepository.findByTrattaAndDataOraPartenzaGreaterThanEqual(tratta, dataOraPartenza);
 		else
 			throw new IllegalStateException("Non è stato indicato nessun parametro di ricerca!");
+	}
+
+	@Transactional(propagation = Propagation.MANDATORY)
+	public Integer allocateSeat(Volo volo) throws IllegalStateException {
+		if(volo.getPostiPasseggeroRestanti() == 0)
+			throw new IllegalStateException("Sono finiti i posti");
+
+		Integer posto = volo.getAereo().getCapienzaPasseggeri() - volo.getPostiPasseggeroRestanti() + 1;
+		volo.setPostiPasseggeroRestanti(volo.getPostiPasseggeroRestanti() - 1);
+
+		voloRepository.save(volo);
+		return posto;
+	}
+
+	@Transactional(propagation = Propagation.MANDATORY)
+	public Integer allocateLuggageCabin(Volo volo, Integer howMany) throws IllegalStateException {
+		if(volo.getPostiBagaglioCabinaRestanti() - howMany < 0)
+			throw new IllegalStateException("Sono finiti i posti in cabina per le valigie");
+
+		volo.setPostiBagaglioCabinaRestanti(volo.getPostiBagaglioCabinaRestanti() - howMany);
+
+		voloRepository.save(volo);
+		return howMany;
+	}
+
+	@Transactional(propagation = Propagation.MANDATORY)
+	public Integer allocateLuggageBulk(Volo volo, Integer howMany) throws IllegalStateException {
+		if(volo.getPostiBagaglioStivaRestanti() - howMany < 0)
+			throw new IllegalStateException("Sono finiti i posti in stiva per le valigie");
+
+		volo.setPostiBagaglioStivaRestanti(volo.getPostiBagaglioStivaRestanti() - howMany);
+
+		voloRepository.save(volo);
+		return howMany;
 	}
 }

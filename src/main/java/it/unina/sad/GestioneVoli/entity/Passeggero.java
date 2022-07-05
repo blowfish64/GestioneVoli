@@ -17,6 +17,20 @@ public class Passeggero {
 	private String documentoIdentità;
 	private String codiceFiscale;
 	@OneToMany(mappedBy = "passeggero") private List<Biglietto> biglietti;
+	private String nomeUtente;	// TODO modellare come relazione con l'Utente autenticato
+
+	public Passeggero() {
+		super();
+	}
+
+	public Passeggero(String nome, String cognome, String eMail, String documentoIdentità, String codiceFiscale, String nomeUtente) {
+		this.nome = nome;
+		this.cognome = cognome;
+		this.eMail = eMail;
+		this.documentoIdentità = documentoIdentità;
+		this.codiceFiscale = codiceFiscale;
+		this.nomeUtente = nomeUtente;
+	}
 
 	public Long getId() {
 		return id;
@@ -72,5 +86,13 @@ public class Passeggero {
 
 	public void setBiglietti(List<Biglietto> biglietti) {
 		this.biglietti = biglietti;
+	}
+
+	public String getNomeUtente() {
+		return nomeUtente;
+	}
+
+	public void setNomeUtente(String nomeUtente) {
+		this.nomeUtente = nomeUtente;
 	}
 }
