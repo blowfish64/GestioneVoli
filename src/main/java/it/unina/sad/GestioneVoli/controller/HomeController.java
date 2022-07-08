@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import it.unina.sad.GestioneVoli.dto.FlightBookRequestDTO;
 import it.unina.sad.GestioneVoli.service.AeroportoService;
 import it.unina.sad.GestioneVoli.service.BigliettoService;
+import it.unina.sad.GestioneVoli.service.PasseggeroService;
 import it.unina.sad.GestioneVoli.service.VoloService;
 
 @Controller @RequestMapping("/")
@@ -32,6 +34,9 @@ public class HomeController implements HandlerInterceptor {
 
 	@Autowired
 	private BigliettoService bigliettoService;
+
+	@Autowired
+	private PasseggeroService passeggeroService;
 
 	@Override public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
 		request.setAttribute("principal", request.getUserPrincipal());
@@ -62,6 +67,19 @@ public class HomeController implements HandlerInterceptor {
 	@PostMapping("/flights/book")
 	public String confirmBooking(HttpServletRequest request, Model model, @RequestBody List<FlightBookRequestDTO> passengerForm, @RequestParam String flight) {
 		bigliettoService.book(passengerForm, flight, request.getUserPrincipal().getName());
+		return "home";
+	}
+
+	@GetMapping("/passengers")
+	public String passengers(HttpServletRequest request, Model model) {
+		model.addAttribute("passengers", passeggeroService.getFromUser(request.getUserPrincipal().getName()));
+		return "home";
+	}
+
+	@GetMapping("/passengers/{id}")
+	public String passengerTickets(HttpServletRequest request, Model model, @PathVariable Long id) {
+		model.addAttribute("passenger", passeggeroService.getById(id));
+		model.addAttribute("tickets", bigliettoService.getByPassenger(id));
 		return "home";
 	}
 

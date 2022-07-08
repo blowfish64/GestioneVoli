@@ -12,11 +12,14 @@
 			<nav class="col-2 px-0">
 				<ul>
 					<li><a th:href="@{/flights}" th:class="${#strings.equals(page, '/flights')} ? 'font-weight-bold'">Ricerca Voli</a></li>
+					<li><a th:href="@{/passengers}" th:class="${#strings.equals(page, '/passengers')} ? 'font-weight-bold'">Passeggeri</a></li>
 				</ul>
 			</nav>
 			<section class="col">
 				<th:block th:replace="${#strings.equals(page, '/flights')} ? ~{home-flights :: flights} : _"></th:block>
 				<th:block th:replace="${#strings.equals(page, '/flights/book')} ? ~{home-book :: book} : _"></th:block>
+				<th:block th:replace="${#strings.equals(page, '/passengers')} ? ~{home-passenger :: passenger} : _"></th:block>
+				<th:block th:replace="${#strings.startsWith(page, '/passengers/')} ? ~{home-tickets :: tickets} : _"></th:block>
 			</section>
 		</div>
 	</main>

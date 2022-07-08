@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.unina.sad.GestioneVoli.dto.FlightBookRequestDTO;
 import it.unina.sad.GestioneVoli.entity.Biglietto;
+import it.unina.sad.GestioneVoli.entity.Passeggero;
 import it.unina.sad.GestioneVoli.entity.Volo;
 import it.unina.sad.GestioneVoli.repository.BigliettoRepository;
 import it.unina.sad.GestioneVoli.utility.BigliettoUtility;
@@ -49,15 +50,23 @@ public class BigliettoService {
 			biglietto.setDataOraEmissione(new Timestamp(Instant.now().toEpochMilli()));
 			biglietto.seteMailPasseggero(r.getConfirmEMail());
 			biglietto.setNumeroCartaCredito(r.getCreditCard());
-			biglietto.setCostoTotale(volo.getPrezzoBase() + Math.max(biglietto.getNumeroBagagliCabina() - 1, 0) * 10 + biglietto.getNumeroBagagliStiva() * 20);
-			biglietto.setVolo(volo);
 			biglietto.setPostoPasseggero(voloService.allocateSeat(volo));
 			biglietto.setNumeroBagagliCabina(voloService.allocateLuggageCabin(volo, r.getNumLuggageCabin().intValue()));
 			biglietto.setNumeroBagagliStiva(voloService.allocateLuggageBulk(volo, r.getNumLuggageBulk().intValue()));
+			biglietto.setCostoTotale(volo.getPrezzoBase() + Math.max(biglietto.getNumeroBagagliCabina() - 1, 0) * 10 + biglietto.getNumeroBagagliStiva() * 20);
+			biglietto.setVolo(volo);
 			biglietto.setPasseggero(passeggeroService.getOrAdd(r.getFirstName(), r.getFamilyName(), r.getConfirmEMail(), r.getCardId(), r.getUniqueId(), loggedInUser));
 			return biglietto;
 		}).collect(Collectors.toList());
 
 		bigliettoRepository.saveAll(biglietti);
+	}
+
+	public List<Biglietto> getByPassenger(Long id) {
+		Passeggero passeggero = passeggeroService.getById(id);
+		if(passeggero == null)
+			throw new IllegalStateException("Questo Passeggero non esiste!");
+		else
+			return bigliettoRepository.findByPasseggero(passeggero);
 	}
 }

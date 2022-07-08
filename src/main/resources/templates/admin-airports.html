@@ -36,7 +36,7 @@
 			<tr th:unless="${#lists.isEmpty(airports)}" th:each="airport : ${airports}" th:object="${airport}" th:id="*{id}">
 				<td>[[*{nome}]]</td>
 				<td>[[*{getCity()}]]</td>
-				<td>[[*{(trattePartenza != null && tratteDestinazione != null) ? trattePartenza.size() + tratteDestinazione.size() : 0}]]</td>
+				<td th:text="*{(trattePartenza != null && tratteDestinazione != null) ? trattePartenza.size() + tratteDestinazione.size() : 0}"></td>
 				<td class="text-center col-1"><img name="delete" style="width: 16px; cursor: pointer" th:src="@{/img/delete.svg}"></td>
 			</tr>
 			<tr th:if="${#lists.isEmpty(airports)}">

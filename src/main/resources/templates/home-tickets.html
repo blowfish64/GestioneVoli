@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:fragment="tickets">
+	<h1 class="mb-2">Visualizzazione dei Biglietti</h1>
+	<h5 class="mb-2">[[${passenger.nome}]] [[${passenger.cognome}]]</h5>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Codice</th>
+				<th>Volo</th>
+				<th>Giorno Validit&agrave;</th>
+				<th>Posto</th>
+				<th>Bagagli in Cabina</th>
+				<th>Bagagli in Stiva</th>
+				<th>Data/Ora Emissione</th>
+				<th>Costo</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody id="ticketsTable">
+			<tr th:unless="${#lists.isEmpty(tickets)}" th:each="ticket : ${tickets}" th:object="${ticket}" th:id="*{id}">
+				<td>[[*{codiceIdentificativo}]]</td>
+				<td th:object="${ticket.volo}">[[*{codice}]] [[*{tratta.aeroportoPartenza.getCity()}]] [[*{tratta.aeroportoPartenza.nome}]] &#x25B6; [[*{tratta.aeroportoDestinazione.getCity()}]] [[*{tratta.aeroportoDestinazione.nome}]]</td>
+				<td>[[*{getDay()}]]</td>
+				<td>[[*{postoPasseggero}]]</td>
+				<td>[[*{numeroBagagliCabina}]]</td>
+				<td>[[*{numeroBagagliStiva}]]</td>
+				<td>[[*{dataOraEmissione}]]</td>
+				<td>[[*{costoTotale}]] €</td>
+				<td>?</td>
+			</tr>
+			<tr th:if="${#lists.isEmpty(tickets)}">
+				<td colspan="6">Non esiste alcun dato.</td>
+			</tr>
+		</tbody>
+	</table>
+</th:block>
+
+</html>

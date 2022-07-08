@@ -119,4 +119,8 @@ public class Biglietto {
 	public void setPasseggero(Passeggero passeggero) {
 		this.passeggero = passeggero;
 	}
+
+	public Date getDay() {
+		return this.giornoValidità;
+	}
 }

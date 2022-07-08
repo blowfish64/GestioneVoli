@@ -95,4 +95,8 @@ public class Passeggero {
 	public void setNomeUtente(String nomeUtente) {
 		this.nomeUtente = nomeUtente;
 	}
+
+	public String getCardId() {
+		return this.documentoIdentità;
+	}
 }

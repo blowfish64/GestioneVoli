@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<th:block th:fragment="flights">
-	<h1 class="mb-4">Ricerca dei Voli</h1>
-	<form class="border border-secondary rounded mb-3 p-3" th:action="@{/flights}" method="get">
+<th:block th:fragment="passenger">
+	<h1 class="mb-4">Gestione dei Passeggeri</h1>
+	<form class="border border-secondary rounded mb-3 p-3" th:action="@{/passengers}" method="post" enctype="application/x-www-form-urlencoded">
 		<div class="mb-3 row">
 			<label for="flightDateTime" class="col-sm-2 col-form-label">Data e Ora di Partenza del Volo</label>
 			<div class="col-sm-10">
@@ -33,34 +33,28 @@
 			</div>
 		</div>
 	</form>
-	<table class="table table-striped" th:if="${success != false} and (${param.keySet().contains('departureAirport')} and ${param.keySet().contains('arrivalAirport')} or ${param.keySet().contains('flightDateTime')})">
+	<table class="table table-striped">
 		<thead>
 			<tr>
-				<th>Codice</th>
-				<th>Data/Ora Partenza</th>
-				<th>Prezzo Base</th>
-				<th>Posti Passeggeri<br>Disponibili</th>
-				<th>Posti Bagagli in<br>Cabina Disponibili</th>
-				<th>Posti Bagagli in<br>Stiva Disponibili</th>
-				<th>Compagnia Aerea</th>
-				<th>Tratta</th>
+				<th>Nome</th>
+				<th>Cognome</th>
+				<th>Codice Fiscale</th>
+				<th>Contatto E-Mail</th>
+				<th>Documento di Identit&agrave;</th>
 				<th></th>
 			</tr>
 		</thead>
 		<tbody id="flightsTable">
-			<tr th:unless="${#lists.isEmpty(flights)}" th:each="flight : ${flights}" th:object="${flight}" th:id="*{codice}">
-				<td>[[*{codice}]]</td>
-				<td>[[${#dates.format(flight.dataOraPartenza, 'dd/MM/yyyy HH:mm')}]]</td>
-				<td>[[*{prezzoBase}]] €</td>
-				<td>[[*{{postiPasseggeroRestanti}}]]</td>
-				<td>[[*{{postiBagaglioCabinaRestanti}}]]</td>
-				<td>[[*{{postiBagaglioStivaRestanti}}]]</td>
-				<td th:object="${flight.aereo}">[[*{compagniaAerea.nome}]]</td>
-				<td th:object="${flight.tratta}">[[*{aeroportoPartenza.getCity()}]] [[*{aeroportoPartenza.nome}]] &#x25B6; [[*{aeroportoDestinazione.getCity()}]] [[*{aeroportoDestinazione.nome}]]</td>
-				<td><a th:href="@{/flights/book(flight=*{codice})}"><img th:src="@{/img/check.svg}" style="width: 16px" title="Prenota"></a></td>
+			<tr th:unless="${#lists.isEmpty(passengers)}" th:each="passenger : ${passengers}" th:object="${passenger}" th:id="*{id}">
+				<td>[[*{nome}]]</td>
+				<td>[[*{cognome}]]</td>
+				<td>[[*{codiceFiscale}]]</td>
+				<td>[[*{eMail}]]</td>
+				<td>[[*{getCardId()}]]</td>
+				<td><a th:href="@{/passengers/{id}(id=*{id})}"><img th:src="@{/img/hamburger.svg}" style="width: 16px" title="Visualizza Biglietti"></a></td>
 			</tr>
-			<tr th:if="${#lists.isEmpty(flights)}">
-				<td colspan="9">Non esiste alcun dato.</td>
+			<tr th:if="${#lists.isEmpty(passengers)}">
+				<td colspan="6">Non esiste alcun dato.</td>
 			</tr>
 		</tbody>
 	</table>

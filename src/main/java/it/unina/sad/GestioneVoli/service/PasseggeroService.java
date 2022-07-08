@@ -1,5 +1,7 @@
 package it.unina.sad.GestioneVoli.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -22,5 +24,13 @@ public class PasseggeroService {
 			passeggeroTest.seteMail(eMail);
 			return passeggeroRepository.save(passeggeroTest);
 		});
+	}
+
+	public List<Passeggero> getFromUser(String name) {
+		return passeggeroRepository.findByNomeUtente(name);
+	}
+
+	public Passeggero getById(Long id) {
+		return passeggeroRepository.findById(id).orElse(null);
 	}
 }
