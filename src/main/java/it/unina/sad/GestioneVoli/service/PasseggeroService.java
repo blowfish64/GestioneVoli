@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +21,7 @@ public class PasseggeroService {
 	@Transactional(propagation = Propagation.MANDATORY)
 	public Passeggero getOrAdd(String nome, String cognome, String eMail, String documentoIdentità, String codiceFiscale, String nomeUtente) {
 		Passeggero passeggeroTest = new Passeggero(nome, cognome, null, documentoIdentità, codiceFiscale, nomeUtente);
-		return passeggeroRepository.findOne(Example.of(passeggeroTest)).orElseGet(() -> {
+		return passeggeroRepository.findOne(Example.of(passeggeroTest, ExampleMatcher.matchingAll().withIgnorePaths("eMail", "id").withIncludeNullValues())).orElseGet(() -> {
 			passeggeroTest.seteMail(eMail);
 			return passeggeroRepository.save(passeggeroTest);
 		});

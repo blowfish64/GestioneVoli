@@ -171,7 +171,7 @@ class GestioneVoliApplicationUnitTests {
 
 	@Test
 	void test_passeggeroService_getFromUser() {
-		assertThat(passeggeroService.getFromUser("user")).hasSize(3);
+		assertThat(passeggeroService.getFromUser("user")).isNotEmpty();
 	}
 
 	@Test
@@ -185,7 +185,7 @@ class GestioneVoliApplicationUnitTests {
 
 	@Test @Transactional
 	void test_passeggeroService_getOrAdd_get() {
-		assertThat(passeggeroService.getOrAdd("Xxx", "Xxx", null, "XX", "XX", "user")).isNotNull().matches(t -> t.geteMail().equals("xxx@studenti.unina.it"));
+		assertThat(passeggeroService.getOrAdd("Xxx", "Xxx", null, "XX", "XX", "user")).isNotNull().matches(t -> "xxx@studenti.unina.it".equals(t.geteMail()));
 	}
 
 	@Test @Transactional

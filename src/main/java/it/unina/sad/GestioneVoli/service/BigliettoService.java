@@ -36,7 +36,7 @@ public class BigliettoService {
 	public void book(List<FlightBookRequestDTO> requests, String flight, String loggedInUser) throws IllegalStateException {
 		Volo volo = voloService.getById(flight);
 		if(volo == null)
-			throw new IllegalAccessError("Questo Volo non esiste!");
+			throw new IllegalStateException("Questo Volo non esiste!");
 
 		List<Biglietto> biglietti = requests.stream().map(r -> {
 			Biglietto biglietto = new Biglietto();
