@@ -9,11 +9,13 @@
 
 	<main class="container mw-100">
 		<div class="row pt-4">
-			<nav class="col-2 px-0">
-				<ul>
-					<li><a th:href="@{/flights}" th:class="${#strings.equals(page, '/flights')} ? 'font-weight-bold'">Ricerca Voli</a></li>
-					<li><a th:href="@{/passengers}" th:class="${#strings.equals(page, '/passengers')} ? 'font-weight-bold'">Passeggeri</a></li>
+			<nav class="col-2 px-2">
+				<hr>
+				<ul class="nav nav-pills flex-column mb-auto">
+					<li><a th:href="@{/flights}" class="nav-link"  th:classappend="${#strings.equals(page, '/flights')} ? 'active'">Ricerca Voli</a></li>
+					<li><a th:href="@{/passengers}" class="nav-link" th:classappend="${#strings.equals(page, '/passengers')} ? 'active'">Passeggeri</a></li>
 				</ul>
+				<hr>
 			</nav>
 			<section class="col">
 				<th:block th:replace="${#strings.equals(page, '/flights')} ? ~{home-flights :: flights} : _"></th:block>

@@ -3,36 +3,6 @@
 
 <th:block th:fragment="passenger">
 	<h1 class="mb-4">Gestione dei Passeggeri</h1>
-	<form class="border border-secondary rounded mb-3 p-3" th:action="@{/passengers}" method="post" enctype="application/x-www-form-urlencoded">
-		<div class="mb-3 row">
-			<label for="flightDateTime" class="col-sm-2 col-form-label">Data e Ora di Partenza del Volo</label>
-			<div class="col-sm-10">
-				<input class="form-control" type="text" name="flightDateTime" id="flightDateTime" placeholder="Data e Ora di Partenza del Volo" th:value="${param.flightDateTime}">
-			</div>
-		</div>
-		<hr>
-		<div class="mb-3 row">
-			<label for="departureAirport" class="col-sm-2 col-form-label">Aeroporto di Partenza</label>
-			<div class="col-sm-10">
-				<select name="departureAirport" id="departureAirport">
-					<option th:each="airport : ${airports}" th:object="${airport}" th:value="*{id}" th:with="selectedDeparture=${#strings.equals(param.departureAirport, #strings.toString(airport.id))}" th:attrappend="selected=${selectedDeparture} ? 'selected'">[[*{getCity()}]] [[*{nome}]]</option>
-				</select>
-			</div>
-		</div>
-		<div class="mb-3 row">
-			<label for="arrivalAirport" class="col-sm-2 col-form-label">Aeroporto di Destinazione</label>
-			<div class="col-sm-10">
-				<select name="arrivalAirport" id="arrivalAirport">
-					<option th:each="airport : ${airports}" th:object="${airport}" th:value="*{id}" th:with="selectedArrival=${#strings.equals(param.arrivalAirport, #strings.toString(airport.id))}" th:attrappend="selected=${selectedArrival} ? 'selected'">[[*{getCity()}]] [[*{nome}]]</option>
-				</select>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-auto">
-				<input type="submit" value="Cerca Volo" class="btn btn-primary mb-3">
-			</div>
-		</div>
-	</form>
 	<table class="table table-striped">
 		<thead>
 			<tr>

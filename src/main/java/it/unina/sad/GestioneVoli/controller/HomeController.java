@@ -66,7 +66,13 @@ public class HomeController implements HandlerInterceptor {
 
 	@PostMapping("/flights/book")
 	public String confirmBooking(HttpServletRequest request, Model model, @RequestBody List<FlightBookRequestDTO> passengerForm, @RequestParam String flight) {
-		bigliettoService.book(passengerForm, flight, request.getUserPrincipal().getName());
+		try {
+			bigliettoService.book(passengerForm, flight, request.getUserPrincipal().getName());
+			model.addAttribute("success", true);
+		} catch(IllegalStateException e) {
+			model.addAttribute("message", e.getMessage());
+			model.addAttribute("success", false);
+		}
 		return "home";
 	}
 

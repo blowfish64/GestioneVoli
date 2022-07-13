@@ -15,7 +15,6 @@
 				<th>Bagagli in Stiva</th>
 				<th>Data/Ora Emissione</th>
 				<th>Costo</th>
-				<th></th>
 			</tr>
 		</thead>
 		<tbody id="ticketsTable">
@@ -28,7 +27,6 @@
 				<td>[[*{numeroBagagliStiva}]]</td>
 				<td>[[*{dataOraEmissione}]]</td>
 				<td>[[*{costoTotale}]] €</td>
-				<td>?</td>
 			</tr>
 			<tr th:if="${#lists.isEmpty(tickets)}">
 				<td colspan="6">Non esiste alcun dato.</td>

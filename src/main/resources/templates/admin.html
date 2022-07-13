@@ -9,16 +9,18 @@
 
 	<main class="container mw-100">
 		<div class="row pt-4">
-			<nav class="col-2 px-0">
-				<ul>
-					<li><a th:href="@{/admin/airlines}" th:class="${#strings.equals(page, '/admin/airlines')} ? 'font-weight-bold'">Compagnie
+			<nav class="col-2 px-2">
+				<hr>
+				<ul class="nav nav-pills flex-column mb-auto">
+					<li><a th:href="@{/admin/airlines}" class="nav-link" th:classappend="${#strings.equals(page, '/admin/airlines')} ? 'active'">Compagnie
 							Aeree</a></li>
-					<li><a th:href="@{/admin/airports}" th:class="${#strings.equals(page, '/admin/airports')} ? 'font-weight-bold'">Aeroporti</a></li>
-					<li><a th:href="@{/admin/routes}" th:class="${#strings.equals(page, '/admin/routes')} ? 'font-weight-bold'">Tratte</a></li>
-					<li><a th:href="@{/admin/airplanes}" th:class="${#strings.equals(page, '/admin/airplanes')} ? 'font-weight-bold'">Aerei</a></li>
-					<li><a th:href="@{/admin/flights}" th:class="${#strings.equals(page, '/admin/flights')} ? 'font-weight-bold'">Voli</a></li>
-					<li><a th:href="@{/admin/users}" th:class="${#strings.equals(page, '/admin/users')} ? 'font-weight-bold'">Utenti</a></li>
+					<li><a th:href="@{/admin/airports}" class="nav-link" th:classappend="${#strings.equals(page, '/admin/airports')} ? 'active'">Aeroporti</a></li>
+					<li><a th:href="@{/admin/routes}" class="nav-link" th:classappend="${#strings.equals(page, '/admin/routes')} ? 'active'">Tratte</a></li>
+					<li><a th:href="@{/admin/airplanes}" class="nav-link" th:classappend="${#strings.equals(page, '/admin/airplanes')} ? 'active'">Aerei</a></li>
+					<li><a th:href="@{/admin/flights}" class="nav-link" th:classappend="${#strings.equals(page, '/admin/flights')} ? 'active'">Voli</a></li>
+					<li><a th:href="@{/admin/users}" class="nav-link" th:classappend="${#strings.equals(page, '/admin/users')} ? 'active'">Utenti</a></li>
 				</ul>
+				<hr>
 			</nav>
 			<section class="col">
 				<th:block th:replace="${#strings.equals(page, '/admin/airlines')} ? ~{admin-airlines :: airlines} : _"></th:block>
