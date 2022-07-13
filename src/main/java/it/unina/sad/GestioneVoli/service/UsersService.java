@@ -27,7 +27,7 @@ public class UsersService {
 	
 	public void addUser(String email, String password, String role, Boolean isAdmin) throws Exception {
 		if(userDetailsManager.userExists(email))
-			throw new IllegalAccessException("Esiste già un utente con questo nome.");
+			throw new IllegalStateException("Esiste già un utente con questo nome.");
 
 		if(password == null || password.isEmpty() || email == null || email.isEmpty())
 			throw new IllegalStateException("Nome Utente o Password non validi");
